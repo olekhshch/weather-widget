@@ -1,0 +1,15 @@
+{
+  "name": "weather-widget",
+  "version": "1.0.0",
+  "description": "Widget that shows current weather for user's location",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Oleh S",
+  "license": "ISC",
+  "dependencies": {
+    "lite-server": "^2.6.1",
+    "styled-components": "^5.3.10"
+  }
+}
