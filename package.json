@@ -4,7 +4,8 @@
   "description": "Widget that shows current weather for user's location",
   "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server"
   },
   "author": "Oleh S",
   "license": "ISC",
