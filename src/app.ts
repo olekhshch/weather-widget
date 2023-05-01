@@ -1,3 +1,5 @@
+// import weatherKey from "./config";
+
 interface userLocation {
   ip: string;
   city: string;
@@ -6,10 +8,25 @@ interface userLocation {
   longitude: number;
 }
 
+interface weatherData {
+  [key: string]: any;
+  weather: Weather[];
+}
+
+type Weather = {
+  icon: string;
+  id: number;
+  description: string;
+  main: string;
+};
+
 class Widget {
   private widgetContainer: HTMLElement;
   private btnConteiner: HTMLElement;
+  private weatherDisplay: HTMLElement;
   private userLocation: userLocation | undefined;
+  private readonly weatherAPIKey: string = "38611e9c8dc06648b3afa279e635e73b";
+  private weatherData: weatherData;
 
   set newLocation(locationObj: userLocation) {
     this.userLocation = locationObj;
@@ -25,6 +42,9 @@ class Widget {
     this.btnConteiner = document.createElement("section");
     this.btnConteiner.classList.add("btn-conteiner", "flex");
     this.widgetContainer.prepend(this.btnConteiner);
+    this.weatherDisplay = document.createElement("section");
+    this.weatherDisplay.classList.add("display", "flex-col");
+    this.widgetContainer.append(this.weatherDisplay);
 
     this.mountWidget();
     this.setLoading();
@@ -59,6 +79,7 @@ class Widget {
 
   private setLoading() {
     this.widgetContainer.classList.add("loading");
+    this.weatherDisplay.innerHTML = "Loading...";
   }
 
   async fetchIP() {
@@ -67,6 +88,110 @@ class Widget {
     const { ip, city, country, latitude, longitude } = data;
     this.userLocation = { ip, city, country, latitude, longitude };
   }
+
+  async fetchWeather() {
+    const { latitude, longitude } = this.userLocation!;
+    if (!latitude || !longitude) {
+      console.log("No weather data is available for fetching");
+    } else {
+      const responce = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${this.weatherAPIKey}&units=metric`
+      );
+      const data = await responce.json();
+      this.weatherData = data;
+    }
+  }
+
+  aggregateData() {
+    const {
+      main: { temp, feels_like, pressure, humidity },
+      weather,
+      visibility,
+      wind,
+    } = this.weatherData;
+    return {
+      temp,
+      feels_like,
+      pressure,
+      humidity,
+      weather: weather[0],
+      visibility,
+      wind,
+    };
+  }
+
+  setMainInfo() {
+    const widgetData = this.aggregateData();
+    console.log(widgetData);
+    const iconURL = `https://openweathermap.org/img/wn/${widgetData.weather.icon}@2x.png`;
+    const iconEl = document.createElement("img");
+    iconEl.src = iconURL;
+    iconEl.alt = widgetData.weather.description;
+    const conditionEl = document.createElement("h3");
+    conditionEl.innerText = widgetData.weather.description;
+
+    const mainLeftEl = document.createElement("div");
+    mainLeftEl.classList.add("flex-col");
+    mainLeftEl.append(iconEl, conditionEl);
+
+    const mainRightEl = document.createElement("div");
+    mainRightEl.classList.add("flex-col");
+    const tempEl = document.createElement("h2");
+    tempEl.innerText = widgetData.temp + " °C";
+    const feelsLikeEl = document.createElement("p");
+    feelsLikeEl.innerText = "Feels like: " + widgetData.feels_like + " °C";
+    mainRightEl.append(tempEl, feelsLikeEl, conditionEl);
+
+    const mainDivEl = document.createElement("div");
+    mainDivEl.classList.add("flex", "widget-main");
+    mainDivEl.append(iconEl, mainRightEl);
+
+    this.weatherDisplay.innerHTML = "";
+    this.weatherDisplay.prepend(mainDivEl);
+  }
+
+  setAdditionalInfo() {
+    const widgetData = this.aggregateData();
+
+    const tableEl = document.createElement("section");
+    tableEl.classList.add("flex-col", "widget-table");
+    const firstRowEl = document.createElement("div");
+    firstRowEl.classList.add("flex");
+    const secondRowEl = document.createElement("div");
+    secondRowEl.classList.add("flex");
+    tableEl.append(firstRowEl, secondRowEl);
+
+    this.weatherDisplay.append(tableEl);
+
+    firstRowEl.innerHTML = `
+    <div class="flex-grow-1">
+      <p>Humidity [%]</p>
+      <h4>
+      ${widgetData.humidity}
+      </h4>
+    </div>
+    <div class="flex-grow-1">
+    <p>Pressure [hPa]</p>
+    <h4>
+    ${widgetData.pressure}
+    </h4>
+    </div>`;
+
+    secondRowEl.innerHTML = `
+    <div class="width50">
+      <p>Wind [m/s]</p>
+      <h4>
+      ${widgetData.wind.speed}
+      </h4>
+    </div>
+    <div class="width50">
+    <p>Visibility [m]</p>
+    <h4>
+    ${widgetData.visibility}
+    </h4>
+    </div>
+    `;
+  }
 }
 
 const app = async () => {
@@ -74,6 +199,9 @@ const app = async () => {
 
   await widget.fetchIP();
   widget.initializeBtnSection();
+  await widget.fetchWeather();
+  widget.setMainInfo();
+  widget.setAdditionalInfo();
 };
 
 app();
