@@ -1,4 +1,5 @@
 import weatherKey from "./config.js";
+import ConditionColours from "./conditions.js";
 
 interface userLocation {
   ip: string;
@@ -191,6 +192,12 @@ class Widget {
     </h4>
     </div>
     `;
+    this.setWeatherBG();
+  }
+
+  private setWeatherBG() {
+    const { description } = this.aggregateData().weather;
+    this.widgetContainer.classList.remove("loading");
   }
 }
 
