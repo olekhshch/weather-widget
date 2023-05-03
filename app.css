@@ -42,8 +42,13 @@ button {
     opacity: 1;
 }
 
+.widget img {
+    user-select: none;
+}
+
 .widget {
     position: absolute;
+    z-index: 20000;
     top: 40px;
     right: 20px;
     width: 340px;

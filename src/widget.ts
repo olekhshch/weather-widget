@@ -1,5 +1,5 @@
-import weatherKey from "./config.js";
-import ConditionColours from "./conditions.js";
+import weatherKey from "./config";
+import ConditionColours from "./conditions";
 
 interface userLocation {
   ip: string;
@@ -28,6 +28,7 @@ class Widget {
   private userLocation: userLocation | undefined;
   private readonly weatherAPIKey: string = weatherKey;
   private weatherData: weatherData;
+  private styleEl: HTMLStyleElement;
 
   set newLocation(locationObj: userLocation) {
     this.userLocation = locationObj;
@@ -46,6 +47,7 @@ class Widget {
     this.weatherDisplay = document.createElement("section");
     this.weatherDisplay.classList.add("display", "flex-col");
     this.widgetContainer.append(this.weatherDisplay);
+    this.styleEl = document.createElement("style");
 
     this.mountWidget();
     this.setLoading();
@@ -68,14 +70,19 @@ class Widget {
       locationEl.textContent = city + ", " + country;
       locationEl.title = ip;
     }
+
+    closeBtn.addEventListener("click", this.unmountWidget.bind(this));
   }
 
   private mountWidget() {
     document.body.append(this.widgetContainer);
-    const styleEl = document.createElement("style");
-    styleEl.innerHTML =
+    this.styleEl.innerHTML =
       "@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;600&display=swap');";
-    document.body.prepend(styleEl);
+    this.widgetContainer.prepend(this.styleEl);
+  }
+
+  private unmountWidget() {
+    this.widgetContainer.remove();
   }
 
   private setLoading() {
@@ -149,6 +156,7 @@ class Widget {
 
     this.weatherDisplay.innerHTML = "";
     this.weatherDisplay.prepend(mainDivEl);
+    this.setWeatherBG();
   }
 
   setAdditionalInfo() {
@@ -192,11 +200,12 @@ class Widget {
     </h4>
     </div>
     `;
-    this.setWeatherBG();
   }
 
   private setWeatherBG() {
-    const { description } = this.aggregateData().weather;
+    const { main } = this.aggregateData().weather;
+    const colourVar = ConditionColours[main] ?? "clear";
+    this.widgetContainer.classList.add(colourVar);
     this.widgetContainer.classList.remove("loading");
   }
 }

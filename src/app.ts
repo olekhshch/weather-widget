@@ -1,4 +1,4 @@
-import Widget from "./widget.js";
+import Widget from "./widget";
 
 const app = async () => {
   const widget = new Widget();
