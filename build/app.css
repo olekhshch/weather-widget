@@ -1,0 +1,134 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Dosis', sans-serif;
+}
+
+:root {
+    --white: rgb(230, 241, 249);
+    --clear: rgb(54, 145, 235);
+    --clouds: rgb(105, 134, 162);
+    --heavy-clouds: rgb(84, 88, 105);
+    --snow: rgb(197, 201, 228);
+    --snow-text: rgb(89, 85, 122);
+}
+
+.flex {
+    display: flex;
+}
+
+button {
+    background: none;
+    color: var(--white);
+    padding: 2px 4px;
+    border-radius: 6px;
+    border: 1px solid var(--white);
+    cursor: pointer;
+    opacity: 0;
+}
+
+@keyframes appearing {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.widget:hover button {
+    animation: appearing 0.2s;
+    opacity: 1;
+}
+
+.widget img {
+    user-select: none;
+}
+
+.widget {
+    position: absolute;
+    z-index: 20000;
+    top: 40px;
+    right: 20px;
+    width: 340px;
+    height: 260px;
+    color: var(--white);
+    background-color: var(--clear);
+    border-radius: 12px;
+    user-select: none;
+}
+
+@keyframes loadingAnimation {
+    0% {
+        background-color: var(--clear);
+    }
+
+    50% {
+        background-color: var(--clouds);
+    }
+
+    100% {
+        background-color: var(--clear);
+    }
+}
+
+.loading {
+    animation: loadingAnimation 1s infinite;
+}
+
+.btn-conteiner {
+    margin: 4px 2px;
+    padding: 4px 24px;
+    width: 90%;
+    justify-content: space-between;
+    position: absolute;
+}
+
+.display {
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.widget-main {
+    height: 64%;
+    justify-content: center;
+    align-items: center;
+}
+
+h3 {
+    text-transform: capitalize;
+}
+
+.widget-table {
+    height: 28%;
+    padding: 6px 54px;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+.width50 {
+    width: 50%;
+}
+
+.clear {
+    background-color: var(--clear);
+}
+
+.clouds {
+    background-color: var(--clouds);
+}
+
+.heavy-clouds {
+    background-color: var(--heavy-clouds);
+}
+
+.snow {
+    background-color: var(--snow);
+    color: var(--snow-text);
+}
+

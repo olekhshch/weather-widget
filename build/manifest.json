@@ -1,0 +1,13 @@
+{
+ "manifest_version": 3,
+ "name": "Where here&now",
+ "version": "1.0.0",
+ "description": "A small Chrome extension which creates a widget showing current weather based on a user's location",
+ "content_scripts": [
+   {
+     "matches": ["<all_urls>"],
+     "css": ["app.css"],
+     "js": ["./dist/bundle.js"]
+   }
+ ]
+}
